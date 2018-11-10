@@ -1,0 +1,38 @@
+{
+  "name": "@iarna/discobot",
+  "version": "1.0.0",
+  "author": {
+    "name": "Rebecca Turner",
+    "email": "me@re-becca.org",
+    "twitter": "ReBeccaOrg"
+  },
+  "license": "ISC",
+  "scripts": {
+    "prerelease": "npm t",
+    "release": "standard-version -s",
+    "postrelease": "npm publish && git push --follow-tags",
+    "pretest": "standard",
+    "test": "tap -J -100 test/*.js",
+    "update-coc": "weallbehave -o . && git add CODE_OF_CONDUCT.md && git commit -m 'docs(coc): updated CODE_OF_CONDUCT.md'",
+    "update-contrib": "weallcontribute -o . && git add CONTRIBUTING.md && git commit -m 'docs(contributing): updated CONTRIBUTING.md'"
+  },
+  "devDependencies": {
+    "weallbehave": "*",
+    "weallcontribute": "*",
+    "standard": "*",
+    "standard-version": "*",
+    "tap": "*"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/iarna/discobot.git"
+  },
+  "bugs": "https://github.com/iarna/discobot/issues",
+  "homepage": "https://npmjs.com/package/discobot",
+  "dependencies": {
+    "@perl/qr": "^1.2.0",
+    "discord.js": "^11.4.2",
+    "yargs": "^12.0.2"
+  },
+  "description": "A little framework to build my Discord bots off of."
+}
