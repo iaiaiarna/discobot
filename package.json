@@ -25,9 +25,9 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/iarna/discobot.git"
+    "url": "https://github.com/iaiaiarna/discobot.git"
   },
-  "bugs": "https://github.com/iarna/discobot/issues",
+  "bugs": "https://github.com/iaiaiarna/discobot/issues",
   "homepage": "https://npmjs.com/package/discobot",
   "dependencies": {
     "@perl/qr": "^1.2.0",
