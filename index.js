@@ -215,10 +215,6 @@ class BaseBot {
     }
     return result
   }
-  async truncate (str, len) {
-    if (str.length <= len) return str
-    return str.slice(0,len-1) + '…'
-  }
   name (thing) {
      if (!thing) return thing
      if (typeof thing === 'string') return thing
