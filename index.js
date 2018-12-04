@@ -141,7 +141,7 @@ class BaseBot {
       .hide('help')
     Object.keys(this.commands).forEach(name => {
       const cmd = this.commands[name]
-      if (!cmd.filter || cmd.filter({msg, server})) {
+      if (!cmd.filter || cmd.filter({msg, server, bot: this})) {
         yargs.command(cmd.usage || name, cmd.description)
       }
     })
