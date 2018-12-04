@@ -58,7 +58,11 @@ class BaseBot {
     }
   }
   async clientError (err) {
-    console.log(err.message)
+    if (err.code === 'ECONNRESET' || err.code === 'ETIMEDOUT') {
+      console.log('Reconnecting…')
+    } else {
+      console.log(JSON.stringify(err))
+    }
   }
 
   async clientGuildMemberAdd (gm) {
