@@ -25,6 +25,8 @@ class BaseBot {
       .on('messageReactionAdd',  this.asyncHandler(this.clientMessageReactionAdd))
       .on('guildMemberAdd',  this.asyncHandler(this.clientGuildMemberAdd))
     this.commands = {}
+    this.reactions = {}
+    this.reactji = {}
     this.addCommand('status', {
       usage: 'status',
       description: 'Find out about the current status of the bot',
@@ -41,6 +43,9 @@ class BaseBot {
   }
   addCommand (name, info) {
     this.commands[name] = info
+  }
+  addReaction (name, info) {
+    this.reactions[name] = info
   }
   status ($) {
     return (this.conf.name ? `${this.conf.name} is alive!` : `I am alive!`)
@@ -78,22 +83,8 @@ class BaseBot {
 
     const server = this.serversById[mr.message.guild.id]
 
-    if (mr.emoji.id === server.emoji.report.id) {
-      const server = this.serversById[mr.message.guild.id]
-      const report = `Reporting ${mr.message.author} saying:\n${mr.message}`
-      console.log(`**EMOJI REPORT** from ${this.name(user)} in ${this.name(mr.message.channel)}: ${report}`)
-      await mr.remove(user)
-      let embed
-      const files = mr.message.attachments.map(_ => new Discord.Attachment(_.url, _.filename))
-      if (files.length) {
-        embed = new Discord.RichEmbed({author: mr.message.author})
-        if (mr.message.attachments) embed.attachFiles(files)
-      }
-      await server.moderation.send(`@here **EMOJI REPORT** from ${user} in ${mr.message.channel}: ${report}`, {split: true, embed})
-      return Promise.all([
-        mr.message.react(server.emoji.report),
-        this.sendDM(user, `Report in ${mr.message.channel} has been sent to moderators: ${report}`, {split: true, embed})
-      ])
+    if (server.reactji[mr.emoji.id]) {
+      return server.reactji[mr.emoji.id].call(this, {msg: mr.message, mr: mr, server, bot: this, user})
     }
   }
 
@@ -179,16 +170,24 @@ class BaseBot {
         this.serversById[guild.id] = server
         server.name = guild.name
         server.guild = guild
-        if (!server.emoji) server.emoji = Object.assign({working: 'working'}, this.conf.emoji || {})
-        Object.keys(server.emoji).forEach(name => {
+        if (!server.emoji) server.emoji = {...(this.conf.emoji || {})}
+        const reactji = ['working', ...Object.keys(this.reactions)]
+        for (let name of Object.keys(server.emoji)) {
           server.emoji[name] = server.guild.emojis.find(_ => _.name === name)
-        })
+        }
+        if (!server.reactji) server.reactji = {}
+        for (let name of reactji) {
+          if (!server.emoji[name]) {
+            server.emoji[name] = server.guild.emojis.find(_ => _.name === name)
+          }
+          server.reactji[server.emoji[name].id] = this.reactions[name]
+        }
         guild.channels.forEach(ch => {
-          Object.keys(server.channels).forEach(key => {
+          for (let key of Object.keys(server.channels)) {
             if (server.channels[key] === ch.name) {
               server[key] = ch
             }
-          })
+          }
         })
       } else {
         // This would only happen if the bot were added to another server and
